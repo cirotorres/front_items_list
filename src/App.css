@@ -13,6 +13,10 @@
   }
 }
 
+body {
+  background-color: #f8f9fa !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -35,4 +39,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.card-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.25);
 }
