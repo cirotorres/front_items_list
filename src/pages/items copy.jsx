@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import BannerCarosel from "../components/BannerCarosel";
-import useFavorites from "../hooks/useFavorites";
 
 export default function Items() {
   const [items, setItems] = useState([]);
@@ -12,7 +11,6 @@ export default function Items() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const busca = searchParams.get("q") || "";
-  const { isFavorited, toggleFavorite } = useFavorites();
 
 
   useEffect(() => {
@@ -20,9 +18,7 @@ export default function Items() {
       .get("/items", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) =>{
-        console.log("Resposta item:", res.data) 
-         setItems(res.data)})
+      .then((res) => setItems(res.data))
       .catch((err) => alert("Erro ao buscar itens"));
   }, [token]);
 
@@ -43,32 +39,6 @@ export default function Items() {
     } 
   }
 
-  const addToCart = (itemId) => {
-    api.post('/cart/add_item', {
-      user_id: 1,
-      item_id: itemId,
-      quantity: 1,
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(() => {
-      alert('Item adicionado ao carrinho');
-      window.dispatchEvent(new Event("cart:updated")); 
-    })
-    .catch(() => alert('Erro ao adicionar item'));
-  };
-
-  // const addToFavorite = (itemId) => {
-  //   api.post('/favorites/add_item', { 
-  //     item_id: itemId,
-  //   }, {
-  //     headers: { Authorization: `Bearer ${token}` }
-  //   })
-  //   .then(() => {
-  //     alert('Item favoritado.');
-  //   })
-  //   .catch(() => alert('Erro ao favoritar o item'));
-  // };
 
   return (
 
@@ -88,7 +58,6 @@ export default function Items() {
       </div>
       ):(
         <>
-
         </>
       )}
     </div>
@@ -100,7 +69,7 @@ export default function Items() {
       .map((item) => (
         <div
           className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center"
-          style={{ flex: "0 0 20%" }}
+          style={{ flex: "0 0 25%" }}
           key={item.id}
         >
           <div className="card h-100 card-hover" style={{ width: "240px" }}>
@@ -136,7 +105,7 @@ export default function Items() {
                         src={img.thumb_url}
                         alt={item.name}
                         className="d-block w-100 img-thumbnail"
-                        style={{ objectFit: "contain", maxHeight: "180px" }}
+                        style={{ objectFit: "contain", maxHeight: "150px" }}
                       />
                     </div>
                   ))}
@@ -185,35 +154,17 @@ export default function Items() {
             <div className="card-body d-flex flex-column justify-content-between">
               <div>
                 <h5 className="card-title">{item.name}</h5>
-                <p className="card-text text-muted">{item.description}</p>
-              
-                    <div className="d-flex justify-content-between align-items-center">
-                        <span className="h5 mb-0">R$ {item.price}</span>
-                        <div className="btn-group">
-                        <button className="btn btn-outline-danger" onClick={() => {toggleFavorite(item.id)}}>
-                        {isFavorited(item.id) ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-                              <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                            </svg>
-                          ):(
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                              <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                            </svg>
-                          )}
-                        </button>
-                      <button className="btn btn-outline-primary" onClick={() => {addToCart(item.id)}}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-cart-plus" viewBox="0 0 16 16">
-                          <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9z"/>
-                          <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                        </svg>
-                      </button>
-                      </div>
-                    </div>
-          
+                <p className="card-text text-muted">R$ {item.price}</p>
               </div>
             {isAdmin ? (
               <>
               <div className="d-flex justify-content-between mt-3">
+                <button
+                  className="btn btn-outline-dark"
+                  onClick={() => navigate(`/items/${item.id}`)}
+                >
+                  Info
+                </button>
 
                 <button
                   className="btn btn-sm btn-warning"
@@ -232,7 +183,17 @@ export default function Items() {
               </>
               ):(
                 <div className="d-flex justify-content-between">
-
+                <button
+                  className="btn btn-outline-info"
+                  onClick={() => navigate(`/items/${item.id}`)}
+                >
+                  Info
+                </button>
+                <button
+                  className="btn btn-outline-success"
+                >
+                  Add Carrinho
+                </button>
                 </div>
               )}
 

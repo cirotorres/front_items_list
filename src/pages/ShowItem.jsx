@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 export default function ShowItem() {
   const [item, setItem] = useState(null);
-  const { token } = useAuth();
+  const { token, isAdmin } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -22,6 +22,37 @@ export default function ShowItem() {
   }, [id, token, navigate]);
 
   if (!item) return null;
+
+  const deletar = async (item) => {
+  const confirmacao = window.confirm(`Tem certeza que deseja excluir o item "${item.name}"?`);
+  if (!confirmacao) return;
+
+  try{
+  await api.delete(`/items/${item.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  alert("Produto deletado")
+  navigate("/items")
+  }
+  catch (err){
+    alert("Erro ao deletar item")
+  } 
+}
+
+  const addToCart = (itemId) => {
+    api.post('/cart/add_item', {
+      user_id: 1,
+      item_id: itemId,
+      quantity: 1,
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(() => {
+      alert('Item adicionado ao carrinho');
+      window.dispatchEvent(new Event("cart:updated"));
+    })
+    .catch(() => alert('Erro ao adicionar item'));
+  };
 
   return (
     <div className="container my-5">
@@ -117,13 +148,67 @@ export default function ShowItem() {
           <h2 className="card-title">{item.name}</h2>
           <p className="text-muted">Preço: R$ {item.price}</p>
           <p className="card-text">{item.description || "Sem descrição."}</p>
+        {isAdmin ? (
+        <div className="d-flex justify-content-center mt-2">
+           <>
+           <button
+            className="btn btn-secondary mt-3"
+            onClick={() => navigate("/items")}
+            >
+            Voltar
+          </button>
 
           <button
+            className="btn btn-secondary mt-3"
+            onClick={() => navigate(`/items/${item.id}/edit`)}
+          >
+            Editar
+          </button>
+
+          <button
+            className="btn btn-secondary mt-3"
+            onClick={() => deletar(item)}
+          >
+            Excluir
+          </button>
+          <button
+            className="btn btn-secondary mt-3"
+            onClick={() => addToCart(item.id)}
+          >
+            Add carrinho
+          </button>       
+          <button
+            className="btn btn-secondary mt-3"
+
+          >
+            Favorito
+          </button>          
+          </>
+        </div>
+          ):(
+            <>
+            <button
             className="btn btn-secondary mt-3"
             onClick={() => navigate("/items")}
           >
             Voltar
           </button>
+          <button
+            className="btn btn-secondary mt-3"
+            onClick={() => addToCart(item.id)}
+          >
+            Add carrinho
+          </button> 
+          <button
+            className="btn btn-secondary mt-3"
+
+          >
+            Favorito
+          </button> 
+            </>
+
+          )}
+
         </div>
       </div>
     </div>

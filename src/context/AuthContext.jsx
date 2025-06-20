@@ -4,10 +4,22 @@ import { jwtDecode } from "jwt-decode";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const savedToken = localStorage.getItem("token");
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
+  const [userId, setUserId] = useState(() => {
+    if (savedToken) {
+      try {
+        return jwtDecode(savedToken).user_id;
+      } catch {
+        return "";
+      }
+    }
+    return "";
+  });
+
   const [isAdmin, setIsAdmin] = useState(() => {
-    const savedToken = localStorage.getItem("token");
+    
     if (savedToken) {
       try {
         const decoded = jwtDecode(savedToken);
@@ -20,29 +32,33 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (jwt, userEmail) => {
+  try {
+    const decoded = jwtDecode(jwt);  
     localStorage.setItem("token", jwt);
     localStorage.setItem("email", userEmail);
+    localStorage.setItem("userId", decoded.user_id);
     setToken(jwt);
     setEmail(userEmail);
-
-    try {
-      const decoded = jwtDecode(jwt);
-      setIsAdmin(decoded.user_adm === true);
+    setIsAdmin(decoded.user_adm === true);
     } catch (e) {
-      setIsAdmin(false);
+
+      logout();
     }
   };
+
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
+    localStorage.removeItem("userId");
     setToken("");
     setEmail("");
+    setUserId("");
     setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ token, email, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ token, email, isAdmin, userId, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
