@@ -12,8 +12,8 @@ const navigate = useNavigate();
       <div className="card mb-4">
         <div className="card-header fw-bold">Configurações da Página</div>
         <div className="card-body d-grid gap-3 col-12 col-md-6 mx-auto">
-          <button className="btn btn-primary" type="button">
-            Alguma Ação
+          <button className="btn btn-primary" type="button" onClick={() => navigate("/config/announcements")}>
+            Configuração Anuncios
           </button>
           <button className="btn btn-primary" type="button">
             Mais Configurações

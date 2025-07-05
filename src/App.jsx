@@ -18,6 +18,8 @@ import Footer from "./components/Footer";
 
 import "./App.css";
 import ConfigPage from "./pages/ConfigPage";
+import ManageAnnouncements from "./pages/ManageAnnouncements";
+import PaymentStatus from "./pages/PaymentStatus";
 
 function AppWrapper() {
   const location = useLocation();
@@ -30,6 +32,7 @@ function AppWrapper() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/pagamento/status" element={<PaymentStatus />} />
         <Route
           path="/items"
           element={
@@ -91,6 +94,14 @@ function AppWrapper() {
         element={
           <PrivateRoute>
             <EditUser/>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/config/announcements"
+        element={
+          <PrivateRoute adminOnly>
+            <ManageAnnouncements />
           </PrivateRoute>
         }
       />

@@ -50,6 +50,7 @@ export default function EditUser() {
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input
+            disabled
             type="email"
             className="form-control"
             placeholder="seu@email.com"
